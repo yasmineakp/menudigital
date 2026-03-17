@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur QR Menu Digital</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .qr-container {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        #qrcode {
+            border: 15px solid #f8f9fa;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            margin: 30px auto;
+            display: block;
+        }
+        .btn-print {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(220,53,69,0.4);
+        }
+        .btn-print:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(220,53,69,0.5);
+        }
+        .demo-links {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            .qr-container, .qr-container * { visibility: visible; }
+            .qr-container { 
+                position: absolute; left: 0; top: 0; 
+                margin: 0; padding: 20px; box-shadow: none;
+                max-width: none; background: white;
+            }
+            #qrcode { border: 8px solid white; margin: 0; }
+            .btn-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center text-white">
+        <div class="qr-container">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-qrcode text-primary me-3"></i>
+                QR Menu Digital
+            </h1>
+            <p class="lead mb-5">Généré automatiquement - Prêt à imprimer</p>
+            
+            <!-- URL du menu (à modifier) -->
+            <div class="alert alert-info">
+                <strong>URL Menu:</strong><br>
+                <small id="menuUrl" class="text-break"></small>
+            </div>
+            
+            <!-- QR CODE -->
+            <canvas id="qrcode" width="300" height="300"></canvas>
+            
+            <div class="mt-4">
+                <button class="btn btn-print btn-lg text-white" onclick="printQR()">
+                    <i class="fas fa-print me-2"></i>IMPRIMER QR
+                </button>
+                <button class="btn btn-outline-light btn-lg ms-3" onclick="downloadPNG()">
+                    <i class="fas fa-download me-2"></i>Télécharger PNG
+                </button>
+            </div>
+            
+            <!-- Liens test locaux -->
+            <div class="demo-links mt-5">
+                <h5>🔥 Tester maintenant :</h5>
+                <div class="d-grid gap-2">
+                    <a href="index.html" class="btn btn-primary">
+                        📱 Menu Client
+                    </a>
+                    <a href="kitchen.html" class="btn btn-success">
+                        👨‍🍳 Écran Cuisine
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL du menu (MODIFIEZ ICI)
+        const MENU_URL = window.location.href.includes('github.io') || window.location.href.includes('vercel.app') 
+            ? `${window.location.origin}/index.html`
+            : `${window.location.origin}/menu-digital/index.html`;
+        
+        document.getElementById('menuUrl').textContent = MENU_URL;
+        
+        // Générer QR
+        QRCode.toCanvas(document.getElementById('qrcode'), MENU_URL, {
+            width: 300,
+            margin: 1,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            },
+            errorCorrectionLevel: 'H' // Haute correction d'erreur
+        }, function (error) {
+            if (error) console.error(error);
+            console.log('✅ QR Code généré:', MENU_URL);
+        });
+
+        // Impression
+        function printQR() {
+            window.print();
+        }
+
+        // Téléchargement PNG
+        function downloadPNG() {
+            const canvas = document.getElementById('qrcode');
+            const link = document.createElement('a');
+            link.download = `QR-Menu-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

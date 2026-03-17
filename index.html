@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Digital - Le Gourmet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Modal Table Number -->
+    <div class="modal fade" id="tableModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title"><i class="fas fa-table me-2"></i>Numéro de table</h5>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <p class="mb-4">Quel est votre numéro de table ?</p>
+                    <input type="number" class="form-control form-control-lg text-center mb-3" 
+                           id="tableInput" min="1" max="100" placeholder="ex: 5">
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg" onclick="setTable()">
+                            <i class="fas fa-check me-2"></i>Commencer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <h3 class="navbar-brand mb-0">
+                <i class="fas fa-utensils me-2"></i>Le Gourmet
+            </h3>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-success fs-6 me-3" id="tableNumber">--</span>
+                <button class="btn btn-outline-light btn-sm" onclick="clearCart()">
+                    <i class="fas fa-trash"></i> Vider
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-5 pt-4">
+        <!-- Panier flottant -->
+        <div class="cart-floating" id="cartFloating">
+            <button class="btn btn-success" onclick="showCart()">
+                <i class="fas fa-shopping-cart"></i> 
+                <span id="cartCount">0</span>
+            </button>
+            <span id="cartTotal">0€</span>
+        </div>
+
+        <!-- Recherche -->
+        <div class="search-bar mb-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Rechercher un plat...">
+            </div>
+        </div>
+
+        <!-- ONGLETS CATÉGORIES -->
+        <ul class="nav nav-tabs nav-fill mb-5 tab-menu shadow-lg" id="categoryTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active tab-link" id="entrees-tab" data-bs-toggle="tab" 
+                        data-bs-target="#entrees" type="button" role="tab">
+                    <i class="fas fa-seedling me-2"></i>Entrées
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link tab-link" id="plats-tab" data-bs-toggle="tab" 
+                        data-bs-target="#plats" type="button" role="tab">
+                    <i class="fas fa-drumstick-bite me-2"></i>Plats
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link tab-link" id="desserts-tab" data-bs-toggle="tab" 
+                        data-bs-target="#desserts" type="button" role="tab">
+                    <i class="fas fa-ice-cream me-2"></i>Desserts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link tab-link" id="boissons-tab" data-bs-toggle="tab" 
+                        data-bs-target="#boissons" type="button" role="tab">
+                    <i class="fas fa-wine-bottle me-2"></i>Boissons
+                </button>
+            </li>
+        </ul>
+
+        <!-- CONTENU ONGLETS -->
+        <div class="tab-content" id="categoryTabContent">
+            <!-- Onglet Entrées -->
+            <div class="tab-pane fade show active" id="entrees" role="tabpanel">
+                <div class="row" id="entreesItems"></div>
+            </div>
+            <!-- Onglet Plats -->
+            <div class="tab-pane fade" id="plats" role="tabpanel">
+                <div class="row" id="platsItems"></div>
+            </div>
+            <!-- Onglet Desserts -->
+            <div class="tab-pane fade" id="desserts" role="tabpanel">
+                <div class="row" id="dessertsItems"></div>
+            </div>
+            <!-- Onglet Boissons -->
+            <div class="tab-pane fade" id="boissons" role="tabpanel">
+                <div class="row" id="boissonsItems"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Panier (inchangé) -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Panier <span class="badge bg-success fs-6" id="tableConfirm"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="cartItems"></div>
+                <div class="modal-footer">
+                    <div class="w-100">
+                        <div class="row">
+                            <div class="col-6"><h5>Total: <span id="modalTotal">0€</span></h5></div>
+                            <div class="col-6">
+                                <button class="btn btn-success w-100" onclick="sendOrder()">
+                                    <i class="fas fa-paper-plane"></i> Envoyer Table #<span id="sendTable"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="orderToast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <strong class="me-auto">Commande envoyée !</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

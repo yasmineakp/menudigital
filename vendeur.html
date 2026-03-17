@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Écran Cuisine - Le Gourmet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="menu.css">
+</head>
+<body class="bg-gradient">
+    <div class="container-fluid p-0 h-100vh">
+        <div class="row h-100">
+            <!-- Sidebar Contrôles -->
+            <div class="col-lg-3 col-md-4 bg-white border-end shadow-sm p-4">
+                <div class="text-center mb-4">
+                    <h3><i class="fas fa-fire text-danger me-2"></i>Cuisine</h3>
+                    <p class="text-muted mb-0">Commandes en temps réel</p>
+                </div>
+                
+                <!-- Filtres -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Filtrer</label>
+                    <select class="form-select" id="filterStatus">
+                        <option value="all">Toutes</option>
+                        <option value="pending" selected>En attente</option>
+                        <option value="preparing">En préparation</option>
+                        <option value="ready">Prêt</option>
+                        <option value="cancelled">Annulée</option>
+                    </select>
+                </div>
+
+                <!-- Statistiques -->
+                <div class="row text-center mb-4">
+                    <div class="col-6">
+                        <div class="stat-card bg-warning text-white p-3 rounded-3">
+                            <div class="h4 mb-0" id="pendingCount">0</div>
+                            <small>En attente</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card bg-info text-white p-3 rounded-3">
+                            <div class="h4 mb-0" id="preparingCount">0</div>
+                            <small>Préparation</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions globales -->
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-danger" onclick="clearAllOrders()">
+                        <i class="fas fa-trash me-2"></i>Vider tout
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="exportOrders()">
+                        <i class="fas fa-download me-2"></i>Exporter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Zone commandes -->
+            <div class="col-lg-9 col-md-8 p-4 overflow-auto" id="ordersContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary fa-3x mb-3" role="status"></div>
+                    <h4>Aucune commande en attente</h4>
+                    <p class="text-muted">Les clients passent leurs commandes ici</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio notification (silencieux par défaut) -->
+    <audio id="notifySound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAo" type="audio/wav">
+    </audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="kitchen.js"></script>
+</body>
+</html>
