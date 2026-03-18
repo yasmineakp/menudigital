@@ -150,8 +150,7 @@ function clearCart() {
 
 // ... tout le code existant ...
 
-// REMPLACER fonction sendOrder()
-async function sendOrder() {
+function sendOrder() {
     if (!tableNumber) return showToast('Indiquez votre table', 'warning');
     if (cart.length === 0) return showToast('Panier vide !', 'warning');
     
