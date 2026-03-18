@@ -148,7 +148,10 @@ function clearCart() {
     showToast('Panier vidé !');
 }
 
-function sendOrder() {
+// ... tout le code existant ...
+
+// REMPLACER fonction sendOrder()
+async function sendOrder() {
     if (!tableNumber) return showToast('Indiquez votre table', 'warning');
     if (cart.length === 0) return showToast('Panier vide !', 'warning');
     
@@ -160,6 +163,23 @@ function sendOrder() {
         status: 'pending',
         timestamp: new Date().toISOString()
     };
+    
+    // ✅ SOLUTION GLOBALE : Broadcast vers tous
+    if (window.BroadcastChannel) {
+        const channel = new BroadcastChannel('restaurant_orders');
+        channel.postMessage({type: 'NEW_ORDER', order});
+        channel.close();
+    }
+    
+    // Fallback localStorage
+    let kitchenOrders = JSON.parse(localStorage.getItem('kitchenOrders') || '[]');
+    kitchenOrders.unshift(order);
+    localStorage.setItem('kitchenOrders', JSON.stringify(kitchenOrders));
+    
+    showToast(`✅ Table ${tableNumber} | ${order.total.toFixed(2)}€`);
+    clearCart();
+    bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+}
     
     // Simulation temps réel
     let kitchenOrders = JSON.parse(localStorage.getItem('kitchenOrders') || '[]');
