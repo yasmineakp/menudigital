@@ -1,32 +1,7 @@
 let orders = [];
 let currentFilter = 'pending';
 // Temps réel global
-if (window.BroadcastChannel) {
-    const channel = new BroadcastChannel('orders_channel');
-    channel.onmessage = (e) => {
-        if (e.data.type === 'NEW_ORDER') {
-            orders.unshift(e.data.order);
-            renderOrders();
-            updateStats();
-            notifyNewOrder();
-        }
-    };
-}
 
-// Scan localStorage toutes les 3s
-setInterval(() => {
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith('restaurant_orders_')) {
-            const order = JSON.parse(localStorage.getItem(key));
-            if (order && !orders.find(o => o.id === order.id)) {
-                orders.unshift(order);
-                renderOrders();
-                updateStats();
-            }
-        }
-    }
-}, 3000);
 document.addEventListener('DOMContentLoaded', function() {
     loadOrders();
     setupEventListeners();
