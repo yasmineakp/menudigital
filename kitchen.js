@@ -1,6 +1,5 @@
 let orders = [];
 let currentFilter = 'pending';
-// Temps réel global
 
 document.addEventListener('DOMContentLoaded', function() {
     loadOrders();
