@@ -1,9 +1,5 @@
 let orders = [];
 let currentFilter = 'pending';
-// Ajout au début kitchen.js
-
-
-// Reste du code inchangé...
 
 document.addEventListener('DOMContentLoaded', function() {
     loadOrders();
@@ -11,18 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStats();
     watchForNewOrders();
 });
-let channel;
-if (window.BroadcastChannel) {
-    channel = new BroadcastChannel('restaurant_orders');
-    channel.onmessage = function(event) {
-        if (event.data.type === 'NEW_ORDER') {
-            orders.unshift(event.data.order);
-            renderOrders();
-            updateStats();
-            notifyNewOrder();
-        }
-    };
-}
 
 function setupEventListeners() {
     document.getElementById('filterStatus').addEventListener('change', function() {
