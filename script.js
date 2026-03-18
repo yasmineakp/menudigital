@@ -150,19 +150,7 @@ function clearCart() {
 
 // ... tout le code existant ...
 
-function sendOrder() {
-    if (!tableNumber) return showToast('Indiquez votre table', 'warning');
-    if (cart.length === 0) return showToast('Panier vide !', 'warning');
-    
-    const order = {
-        table: tableNumber,
-        id: Date.now(),
-        items: [...cart],
-        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-        status: 'pending',
-        timestamp: new Date().toISOString()
-    };
-    
+
     // ✅ SOLUTION GLOBALE : Broadcast vers tous
     if (window.BroadcastChannel) {
         const channel = new BroadcastChannel('restaurant_orders');
@@ -227,3 +215,31 @@ document.getElementById('searchInput')?.addEventListener('input', function(e) {
         renderCategory(category, items);
     });
 });
+async function sendOrder() {
+    if (!tableNumber) return showToast('Indiquez votre table', 'warning');
+    if (cart.length === 0) return showToast('Panier vide !', 'warning');
+    
+    const order = {
+        table: tableNumber,
+        id: Date.now(),
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        status: 'pending',
+        timestamp: new Date().toISOString()
+    };
+    
+    // 🔥 SOLUTION GLOBALE : URL + localStorage universel
+    const urlKey = 'restaurant_orders_' + btoa(order.table + order.id);
+    localStorage.setItem(urlKey, JSON.stringify(order));
+    
+    // Broadcast tous navigateurs
+    if (window.BroadcastChannel) {
+        const channel = new BroadcastChannel('orders_channel');
+        channel.postMessage({type: 'NEW_ORDER', order});
+        setTimeout(() => channel.close(), 100);
+    }
+    
+    showToast(`✅ Table ${tableNumber} | ${order.total.toFixed(2)}€`);
+    clearCart();
+    bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+}
