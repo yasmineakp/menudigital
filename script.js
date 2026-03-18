@@ -183,3 +183,28 @@ function showToast(message, type = 'info') {
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
 }
+document.getElementById('searchInput')?.addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase().trim();
+    
+    if (query.length === 0) {
+        // Pas de recherche → tous les plats
+        renderCategory('entrees', MENU_ITEMS.filter(item => item.category === 'entrees'));
+        renderCategory('plats', MENU_ITEMS.filter(item => item.category === 'plats'));
+        renderCategory('desserts', MENU_ITEMS.filter(item => item.category === 'desserts'));
+        renderCategory('boissons', MENU_ITEMS.filter(item => item.category === 'boissons'));
+        return;
+    }
+    
+    // Recherche floue dans TOUS les onglets
+    ['entrees', 'plats', 'desserts', 'boissons'].forEach(category => {
+        const items = MENU_ITEMS.filter(item => 
+            item.category === category && (
+                item.name.toLowerCase().includes(query) ||
+                item.desc.toLowerCase().includes(query) ||
+                item.name.toLowerCase().split(' ').some(word => word.includes(query)) ||
+                item.desc.toLowerCase().split(' ').some(word => word.includes(query))
+            )
+        );
+        renderCategory(category, items);
+    });
+});
