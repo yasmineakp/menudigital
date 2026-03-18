@@ -148,25 +148,18 @@ function clearCart() {
     showToast('Panier vidé !');
 }
 
-// ... tout le code existant ...
-
-
-    // ✅ SOLUTION GLOBALE : Broadcast vers tous
-    if (window.BroadcastChannel) {
-        const channel = new BroadcastChannel('restaurant_orders');
-        channel.postMessage({type: 'NEW_ORDER', order});
-        channel.close();
-    }
+function sendOrder() {
+    if (!tableNumber) return showToast('Indiquez votre table', 'warning');
+    if (cart.length === 0) return showToast('Panier vide !', 'warning');
     
-    // Fallback localStorage
-    let kitchenOrders = JSON.parse(localStorage.getItem('kitchenOrders') || '[]');
-    kitchenOrders.unshift(order);
-    localStorage.setItem('kitchenOrders', JSON.stringify(kitchenOrders));
-    
-    showToast(`✅ Table ${tableNumber} | ${order.total.toFixed(2)}€`);
-    clearCart();
-    bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
-}
+    const order = {
+        table: tableNumber,
+        id: Date.now(),
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        status: 'pending',
+        timestamp: new Date().toISOString()
+    };
     
     // Simulation temps réel
     let kitchenOrders = JSON.parse(localStorage.getItem('kitchenOrders') || '[]');
@@ -189,57 +182,4 @@ function showToast(message, type = 'info') {
     toast.querySelector('.toast-body').textContent = message;
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
-}
-document.getElementById('searchInput')?.addEventListener('input', function(e) {
-    const query = e.target.value.toLowerCase().trim();
-    
-    if (query.length === 0) {
-        // Pas de recherche → tous les plats
-        renderCategory('entrees', MENU_ITEMS.filter(item => item.category === 'entrees'));
-        renderCategory('plats', MENU_ITEMS.filter(item => item.category === 'plats'));
-        renderCategory('desserts', MENU_ITEMS.filter(item => item.category === 'desserts'));
-        renderCategory('boissons', MENU_ITEMS.filter(item => item.category === 'boissons'));
-        return;
-    }
-    
-    // Recherche floue dans TOUS les onglets
-    ['entrees', 'plats', 'desserts', 'boissons'].forEach(category => {
-        const items = MENU_ITEMS.filter(item => 
-            item.category === category && (
-                item.name.toLowerCase().includes(query) ||
-                item.desc.toLowerCase().includes(query) ||
-                item.name.toLowerCase().split(' ').some(word => word.includes(query)) ||
-                item.desc.toLowerCase().split(' ').some(word => word.includes(query))
-            )
-        );
-        renderCategory(category, items);
-    });
-});
-async function sendOrder() {
-    if (!tableNumber) return showToast('Indiquez votre table', 'warning');
-    if (cart.length === 0) return showToast('Panier vide !', 'warning');
-    
-    const order = {
-        table: tableNumber,
-        id: Date.now(),
-        items: [...cart],
-        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-        status: 'pending',
-        timestamp: new Date().toISOString()
-    };
-    
-    // 🔥 SOLUTION GLOBALE : URL + localStorage universel
-    const urlKey = 'restaurant_orders_' + btoa(order.table + order.id);
-    localStorage.setItem(urlKey, JSON.stringify(order));
-    
-    // Broadcast tous navigateurs
-    if (window.BroadcastChannel) {
-        const channel = new BroadcastChannel('orders_channel');
-        channel.postMessage({type: 'NEW_ORDER', order});
-        setTimeout(() => channel.close(), 100);
-    }
-    
-    showToast(`✅ Table ${tableNumber} | ${order.total.toFixed(2)}€`);
-    clearCart();
-    bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
 }
