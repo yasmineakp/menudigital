@@ -1,6 +1,16 @@
 let orders = [];
 let currentFilter = 'pending';
 // Ajout au début kitchen.js
+
+
+// Reste du code inchangé...
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadOrders();
+    setupEventListeners();
+    updateStats();
+    watchForNewOrders();
+});
 let channel;
 if (window.BroadcastChannel) {
     channel = new BroadcastChannel('restaurant_orders');
@@ -13,15 +23,6 @@ if (window.BroadcastChannel) {
         }
     };
 }
-
-// Reste du code inchangé...
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadOrders();
-    setupEventListeners();
-    updateStats();
-    watchForNewOrders();
-});
 
 function setupEventListeners() {
     document.getElementById('filterStatus').addEventListener('change', function() {
